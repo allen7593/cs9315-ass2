@@ -36,15 +36,16 @@ Status newRelation(char *name, Count nattrs, float pF,
 	p->nattrs = nattrs;
 	p->pF = pF,
 	p->tupsize = 28 + 7*(nattrs-2);
-	p->tupPP = (PAGESIZE-sizeof(Count))/p->tupsize;
+	Count available = (PAGESIZE-sizeof(Count));
+	p->tupPP = available/p->tupsize;
 	p->tk = tk; 
 	if (tm%8 > 0) tm += 8-(tm%8); // round up to byte size
-	p->tm = tm; p->tsigSize = tm/8; p->tsigPP = PAGESIZE/(tm/8);
+	p->tm = tm; p->tsigSize = tm/8; p->tsigPP = available/(tm/8);
 	if (pm%8 > 0) pm += 8-(pm%8); // round up to byte size
-	p->pm = pm; p->psigSize = pm/8; p->psigPP = PAGESIZE/(pm/8);
+	p->pm = pm; p->psigSize = pm/8; p->psigPP = available/(pm/8);
 	if (p->psigPP < 2) { free(r); return -1; }
 	if (bm%8 > 0) bm += 8-(bm%8); // round up to byte size
-	p->bm = bm; p->bsigSize = bm/8; p->bsigPP = PAGESIZE/(bm/8);
+	p->bm = bm; p->bsigSize = bm/8; p->bsigPP = available/(bm/8);
 	if (p->bsigPP < 2) { free(r); return -1; }
 	r->infof = openFile(name,"info");
 	r->dataf = openFile(name,"data");

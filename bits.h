@@ -24,5 +24,7 @@ void orBits(Bits, Bits);
 void getBits(Page, Offset, Bits);
 void putBits(Page, Offset, Bits);
 void showBits(Bits);
+Bits copyBits(Bits);
+Bool equalBits(Bits, Bits);
 
 #endif
