@@ -12,30 +12,31 @@ add_executable(cs9315
         bsig.h
         chvec.c
         chvec.h
-        create.c
+#        create.c
         defs.h
-        dump.c
-        gendata.c
+#        dump.c
+#        gendata.c
         hash.c
         hash.h
-        insert.c
+#        insert.c
         page.c
         page.h
-        pages.c
+#        pages.c
         psig.c
         psig.h
         query.c
         query.h
         reln.c
         reln.h
-        select.c
-        stats.c
+#        select.c
+#        stats.c
         tsig.c
         tsig.h
         tuple.c
         tuple.h
         util.c
         util.h
-        x1.c
+#        x1.c
         x2.c
-        x3.c)
+#        x3.c
+        )

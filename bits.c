@@ -14,7 +14,7 @@
 typedef struct _BitsRep {
     Count nbits;          // how many bits
     Count nbytes;          // how many bytes in array
-    Byte *bitstring;  // array of bytes to hold bits
+    Byte bitstring[1];  // array of bytes to hold bits
     // actual array size is nbytes
 } BitsRep;
 
@@ -23,7 +23,6 @@ typedef struct _BitsRep {
 Bits newBits(int nbits) {
     Count nbytes = iceil(nbits, 8);
     Bits new = malloc(2 * sizeof(Count) + nbytes);
-    new->bitstring = malloc(nbytes);
     new->nbits = nbits;
     new->nbytes = nbytes;
     for (int i = 0; i < new->nbytes; i++) {
@@ -36,9 +35,6 @@ Bits newBits(int nbits) {
 
 void freeBits(Bits b) {
     if (b != NULL) {
-        if (b->bitstring != NULL) {
-            free(b->bitstring);
-        }
         free(b);
     }
 }
@@ -62,7 +58,6 @@ Bool isSubset(Bits b1, Bits b2) {
     Bits tmp = copyBits(b1);
     andBits(b1, b2);
     Bool  equal = equalBits(b1,b2);
-    free(b1);
     b1 = tmp;
     return equal; // remove this
 }

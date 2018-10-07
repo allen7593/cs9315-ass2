@@ -52,6 +52,7 @@ typedef struct _RelnRep *Reln;
 
 #include "tuple.h"
 #include "page.h"
+#include "bits.h"
 
 Status newRelation(char *name, Count nattrs, float pF,
 				   Count tk, Count tm, Count pm, Count bm);
@@ -60,6 +61,11 @@ void closeRelation(Reln r);
 Bool existsRelation(char *name);
 PageID addToRelation(Reln r, Tuple t);
 void relationStats(Reln r);
+PageID addToSig(Reln r, Bits sig);
+Status addSigToPage(Reln r, Page p, Bits sig);
+Page getSigPage(File f, PageID pid, int sigPageSize);
+void addSigPage(File f, int sigPageSize);
+Status putSigPage(File f, PageID pid, Page p, int sigPageSize);
 
 // Convenience marcos
 

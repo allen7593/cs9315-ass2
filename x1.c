@@ -34,8 +34,8 @@ int main(int argc, char **argv)
 	printf("t=8: "); showBits(b); printf("\n");
 	printf("t=9: "); showBits(a); printf("\n");
 
-    if(equalBits(a, b)) printf("A and B are equal");
-    if(isSubset(a,b)) printf("B is the sebset of A");
+    if(equalBits(a, b)) printf("A and B are equal\n");
+    if(isSubset(a,b)) printf("B is the sebset of A\n");
 
 	freeBits(a);
 	freeBits(b);
