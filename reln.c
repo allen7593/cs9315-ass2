@@ -157,7 +157,7 @@ PageID addToRelation(Reln r, Tuple t) {
     // compute tuple signature and add to tsigf
 
     tsig = makeTupleSig(r, t);
-    addToSig(r, tsig);
+    addToTSig(r, tsig);
 
     // compute page signature and add to psigf
 
@@ -170,7 +170,7 @@ PageID addToRelation(Reln r, Tuple t) {
     return nPages(r) - 1;
 }
 
-PageID addToSig(Reln r, Bits sig) {
+PageID addToTSig(Reln r, Bits sig) {
     Page p;
     PageID pid;
     pid = nTsigPages(r) - 1;
