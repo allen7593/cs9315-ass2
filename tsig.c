@@ -16,6 +16,8 @@ Bits makeTupleSig(Reln r, Tuple t) {
     assert(r != NULL && t != NULL);
     Count bitsPerAttr = codeBits(r);
     Bits tupleSig = newBits(tsigBits(r));
+    Tuple tmp = malloc(sizeof(char) * strlen(t));
+    strcpy(tmp, t);
     char *token = strtok(t, ",");
     Word hashVal = 0;
     int position = 0;
@@ -23,14 +25,17 @@ Bits makeTupleSig(Reln r, Tuple t) {
     // Keep printing tokens while one of the
     // delimiters present in str[].
     while (token != NULL) {
-        hashVal = hash_any(token, strlen(token));
-        srand(hashVal);
-        for (int count = 0; count < bitsPerAttr; count++) {
-            position = rand() % tsigBits(r);
-            setBit(tupleSig, position);
+        if (strcmp(token, "?") != 0) {
+            hashVal = hash_any(token, strlen(token));
+            srand(hashVal);
+            for (int count = 0; count < bitsPerAttr; count++) {
+                position = rand() % tsigBits(r);
+                setBit(tupleSig, position);
+            }
         }
         token = strtok(NULL, ",");
     }
+    strcpy(t, tmp);
     return tupleSig;
 }
 
@@ -38,13 +43,27 @@ Bits makeTupleSig(Reln r, Tuple t) {
 
 void findPagesUsingTupSigs(Query q) {
     assert(q != NULL);
-    //TODO
-
-    setAllBits(q->pages); // remove this
-
-    // The printf below is primarily for debugging
-    // Remove it before submitting this function
-    printf("Matched Pages:");
-    showBits(q->pages);
-    putchar('\n');
+    Bits qsig = makeTupleSig(q->rel, q->qstring);
+    Count maxTuplePP = maxTupsPP(q->rel);
+    Count maxSigPP = maxTsigsPP(q->rel);
+    Page page;
+    PageID pid = 0;
+    Bits tsig;
+    for (int i = 0; i < nTsigPages(q->rel); ++i) {
+        q->nsigpages++;
+        page = getPage(q->rel->tsigf, i);
+        for (int j = 0; j < pageNitems(page); ++j) {
+            q->nsigs++;
+            tsig = newBits(tsigBits(q->rel));
+            getBits(page, j, tsig);
+            if (isSubset(tsig, qsig)) {
+                q->ntuples++;
+                pid = (j + i * maxSigPP) / maxTuplePP;
+                setBit(q->pages, pid);
+            }
+            freeBits(tsig);
+        }
+        free(page);
+    }
+    free(qsig);
 }

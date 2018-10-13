@@ -10,8 +10,12 @@
 Bits makePageSig(Reln r, Tuple t)
 {
 	assert(r != NULL && t != NULL);
-	//TODO
-	return NULL; // remove this
+    Count psigbits = psigBits(r);
+    Bits psig = newBits(psigbits);
+
+
+
+	return psig;
 }
 
 void findPagesUsingPageSigs(Query q)

@@ -28,7 +28,7 @@ add_executable(cs9315
         query.h
         reln.c
         reln.h
-#        select.c
+        select.c
 #        stats.c
         tsig.c
         tsig.h
@@ -37,6 +37,6 @@ add_executable(cs9315
         util.c
         util.h
 #        x1.c
-        x2.c
+#        x2.c
 #        x3.c
         )

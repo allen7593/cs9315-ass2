@@ -174,8 +174,6 @@ PageID addToTSig(Reln r, Bits sig) {
     Page p;
     PageID pid;
     pid = nTsigPages(r) - 1;
-    showBits(sig);
-    printf("\n");
     p = getPage(tsigFile(r), pid);
     if (pageNitems(p) == maxTsigsPP(r)) {
         addPage(tsigFile(r));
@@ -193,9 +191,9 @@ PageID addToTSig(Reln r, Bits sig) {
 
 Status addSigToPage(Reln r, Page p, Bits sig) {
     if (pageNitems(p) == maxTsigsPP(r)) return NOT_OK;
-    int size = iceil(tsigBits(r), 8);
+    int size = tsigBytes(sig);
     Byte *addr = addrInPage(p, pageNitems(p), size);
-    memcpy(addr, sig, size);
+    memcpy(addr, getTsigString(sig), size);
     addOneItem(p);
     return OK;
 }

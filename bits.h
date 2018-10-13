@@ -26,5 +26,7 @@ void putBits(Page, Offset, Bits);
 void showBits(Bits);
 Bits copyBits(Bits);
 Bool equalBits(Bits, Bits);
+Count tsigBytes(Bits);
+Byte* getTsigString(Bits bits);
 
 #endif

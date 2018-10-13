@@ -26,7 +26,7 @@ Bits newBits(int nbits) {
     new->nbits = nbits;
     new->nbytes = nbytes;
     for (int i = 0; i < new->nbytes; i++) {
-        memset(&(new->bitstring[i]), 0, nbytes);
+        memset(&(new->bitstring[i]), 0, 1);
     }
     return new;
 }
@@ -57,16 +57,16 @@ Bool isSubset(Bits b1, Bits b2) {
     assert(b1->nbytes == b2->nbytes);
     Bits tmp = copyBits(b1);
     andBits(b1, b2);
-    Bool  equal = equalBits(b1,b2);
+    Bool equal = equalBits(b1, b2);
     b1 = tmp;
     return equal; // remove this
 }
 
-Bool equalBits(Bits b1, Bits b2){
+Bool equalBits(Bits b1, Bits b2) {
     assert(b1 != NULL && b2 != NULL);
     assert(b1->nbytes == b2->nbytes);
     for (int i = 0; i < b1->nbytes; ++i) {
-        if(b1->bitstring[i] != b2->bitstring[i]){
+        if (b1->bitstring[i] != b2->bitstring[i]) {
             return FALSE;
         }
     }
@@ -109,9 +109,7 @@ void unsetBit(Bits b, int position) {
 
 void unsetAllBits(Bits b) {
     assert(b != NULL);
-    for (int i = 0; i < b->nbytes; i++) {
-        memset(&(b->bitstring[i]), 0, b->nbytes);
-    }
+    memset(&(b->bitstring[0]), 0, b->nbytes);
 }
 
 // bitwise AND ... b1 = b1 & b2
@@ -146,14 +144,16 @@ Bits copyBits(Bits b) {
 // and place it in a BitsRep structure
 
 void getBits(Page p, Offset pos, Bits b) {
-    //TODO
+    Byte *addr = addrInPage(p, pos, b->nbytes);
+    memcpy(getTsigString(b), addr, b->nbytes);
 }
 
 // copy the bit-string array in a BitsRep
 // structure to specified position in Page buffer
 
 void putBits(Page p, Offset pos, Bits b) {
-    //TODO
+    Byte *addr = addrInPage(p, pos, b->nbytes);
+    memcpy(addr, getTsigString(b), b->nbytes);
 }
 
 // show Bits on stdout
@@ -173,3 +173,7 @@ void showBits(Bits b) {
         }
     }
 }
+
+Count tsigBytes(Bits bits) { return bits->nbytes; }
+
+Byte *getTsigString(Bits bits) { return bits->bitstring; }
