@@ -93,10 +93,21 @@ Bool tupleEqualsToQuery(Tuple t, Query q) {
     char **qList = splitStr(q->qstring, nAtrr);
     for (int i = 0; i < nAtrr; ++i) {
         if (*qList[i] != '?' && strcmp(tList[i], qList[i]) != 0) {
+            freeList(tList,nAtrr);
+            freeList(qList,nAtrr);
             return FALSE;
         }
     }
+    freeList(tList,nAtrr);
+    freeList(qList,nAtrr);
     return TRUE;
+}
+
+void freeList(char **list, Count nAttrs) {
+    for (int i = 0; i < nAttrs; ++i) {
+        free(list[i]);
+    }
+    free(list);
 }
 
 char **splitStr(Tuple t, Count nAtrr) {

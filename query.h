@@ -36,5 +36,6 @@ void  queryStats(Query);
 void  closeQuery(Query);
 Bool tupleEqualsToQuery(Tuple, Query);
 char **splitStr(Tuple t, Count nAtrr);
+void freeList(char **list, Count nAttrs);
 
 #endif
