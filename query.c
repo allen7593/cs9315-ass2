@@ -80,8 +80,8 @@ void scanAndDisplayMatchingTuples(Query q) {
             }
             if (!match) {
                 q->nfalse++;
-                match = FALSE;
             }
+            match = FALSE;
             free(p);
         }
     }

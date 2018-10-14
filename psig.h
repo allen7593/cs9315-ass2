@@ -12,5 +12,6 @@
 
 Bits makePageSig(Reln, Tuple);
 void findPagesUsingPageSigs(Query);
+void makePageSignature(Reln r, Tuple t, Bits psig);
 
 #endif

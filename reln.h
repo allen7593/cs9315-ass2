@@ -63,9 +63,6 @@ PageID addToRelation(Reln r, Tuple t);
 void relationStats(Reln r);
 PageID addToTSig(Reln r, Bits sig);
 Status addSigToPage(Reln r, Page p, Bits sig);
-Page getSigPage(File f, PageID pid, int sigPageSize);
-void addSigPage(File f, int sigPageSize);
-Status putSigPage(File f, PageID pid, Page p, int sigPageSize);
 
 // Convenience marcos
 

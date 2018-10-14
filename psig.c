@@ -28,9 +28,9 @@ Bits makePageSig(Reln r, Tuple t) {
 
     makePageSignature(r, t, psig);
     nPsigs(r) = pageNum + 1;
-    addOneItem(psigPage);
+    if (nTuples(r) % maxTupsPP(r) == 1)
+        addOneItem(psigPage);
     putBits(psigPage, pSigPageOffSet, psig);
-    addOneItem(psigPage);
     putPage(psigFile(r), nPsigPages(r) - 1, psigPage);
 
     return psig;
@@ -61,5 +61,28 @@ void makePageSignature(Reln r, Tuple t, Bits psig) {
 
 void findPagesUsingPageSigs(Query q) {
     assert(q != NULL);
+    Bits qsig = newBits(psigBits(q->rel));
+    Bits psig = newBits(psigBits(q->rel));;
+    makePageSignature(q->rel, q->qstring, qsig);
+    Count numPsigPages = nPsigPages(q->rel);
+    Page sigPage;
+    Count pageNItem;
+    Count pageNum = 0;
+    for (PageID i = 0; i < numPsigPages; ++i) {
+        q->nsigpages++;
+        sigPage = getPage(psigFile(q->rel), i);
+        pageNItem = pageNitems(sigPage);
+        for (Offset j = 0; j < pageNItem; ++j) {
+            q->nsigs++;
+            getBits(sigPage, j, psig);
+            if (isSubset(psig, qsig)) {
+                pageNum = (i * maxPsigsPP(q->rel)) + j;
+                setBit(q->pages, pageNum);
+            }
+        }
+        free(sigPage);
+    }
+    freeBits(qsig);
+    freeBits(psig);
 }
 
