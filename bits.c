@@ -145,7 +145,7 @@ Bits copyBits(Bits b) {
 
 void getBits(Page p, Offset pos, Bits b) {
     Byte *addr = addrInPage(p, pos, b->nbytes);
-    memcpy(getTsigString(b), addr, b->nbytes);
+    memcpy(getSigString(b), addr, b->nbytes);
 }
 
 // copy the bit-string array in a BitsRep
@@ -153,7 +153,7 @@ void getBits(Page p, Offset pos, Bits b) {
 
 void putBits(Page p, Offset pos, Bits b) {
     Byte *addr = addrInPage(p, pos, b->nbytes);
-    memcpy(addr, getTsigString(b), b->nbytes);
+    memcpy(addr, getSigString(b), b->nbytes);
 }
 
 // show Bits on stdout
@@ -176,4 +176,4 @@ void showBits(Bits b) {
 
 Count tsigBytes(Bits bits) { return bits->nbytes; }
 
-Byte *getTsigString(Bits bits) { return bits->bitstring; }
+Byte *getSigString(Bits bits) { return bits->bitstring; }

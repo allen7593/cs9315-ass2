@@ -27,6 +27,6 @@ void showBits(Bits);
 Bits copyBits(Bits);
 Bool equalBits(Bits, Bits);
 Count tsigBytes(Bits);
-Byte* getTsigString(Bits bits);
+Byte* getSigString(Bits bits);
 
 #endif

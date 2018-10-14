@@ -12,6 +12,7 @@
 #include "tsig.h"
 #include "bits.h"
 #include "hash.h"
+#include "psig.h"
 // open a file with a specified suffix
 // - always open for both reading and writing
 
@@ -161,8 +162,8 @@ PageID addToRelation(Reln r, Tuple t) {
 
     // compute page signature and add to psigf
 
-    //TODO
-
+    makePageSig(r,t);
+//    showBits(psig);printf("\n");
     // use page signature to update bit-slices
 
     //TODO
@@ -193,7 +194,7 @@ Status addSigToPage(Reln r, Page p, Bits sig) {
     if (pageNitems(p) == maxTsigsPP(r)) return NOT_OK;
     int size = tsigBytes(sig);
     Byte *addr = addrInPage(p, pageNitems(p), size);
-    memcpy(addr, getTsigString(sig), size);
+    memcpy(addr, getSigString(sig), size);
     addOneItem(p);
     return OK;
 }
