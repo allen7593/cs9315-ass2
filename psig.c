@@ -26,6 +26,17 @@ Bits makePageSig(Reln r, Tuple t) {
     }
     getBits(psigPage, pSigPageOffSet, psig);
 
+    makePageSignature(r, t, psig);
+    nPsigs(r) = pageNum + 1;
+    addOneItem(psigPage);
+    putBits(psigPage, pSigPageOffSet, psig);
+    addOneItem(psigPage);
+    putPage(psigFile(r), nPsigPages(r) - 1, psigPage);
+
+    return psig;
+}
+
+void makePageSignature(Reln r, Tuple t, Bits psig) {
     Count bitsPerAttr = codeBits(r);
     Tuple tmp = malloc(sizeof(char) * strlen(t));
     strcpy(tmp, t);
@@ -33,8 +44,6 @@ Bits makePageSig(Reln r, Tuple t) {
     Word hashVal = 0;
     int position = 0;
 
-    // Keep printing tokens while one of the
-    // delimiters present in str[].
     while (token != NULL) {
         if (strcmp(token, "?") != 0) {
             hashVal = hash_any(token, strlen(token));
@@ -47,18 +56,10 @@ Bits makePageSig(Reln r, Tuple t) {
         token = strtok(NULL, ",");
     }
     strcpy(t, tmp);
-    nPsigs(r) = pageNum + 1;
-    addOneItem(psigPage);
-    putBits(psigPage, pSigPageOffSet, psig);
-    addOneItem(psigPage);
-    putPage(psigFile(r), nPsigPages(r) - 1, psigPage);
-
-    return psig;
+    free(tmp);
 }
 
 void findPagesUsingPageSigs(Query q) {
     assert(q != NULL);
-    //TODO
-    setAllBits(q->pages); // remove this
 }
 
