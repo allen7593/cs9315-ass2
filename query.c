@@ -72,8 +72,6 @@ void scanAndDisplayMatchingTuples(Query q) {
             for (int j = 0; j < pageNitems(p); j++) {
                 q->ntuples++;
                 t = getTupleFromPage(q->rel, p, j);
-                showTuple(q->rel, t);
-                showTuple(q->rel, q->qstring);
                 if (tupleEqualsToQuery(t, q)) {
                     showTuple(q->rel, t);
                     match = TRUE;
