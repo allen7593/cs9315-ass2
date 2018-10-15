@@ -97,13 +97,9 @@ Bool tupleEqualsToQuery(Tuple t, Query q) {
     char **qList = splitStr(tmpQ, nAtrr);
     for (int i = 0; i < nAtrr; ++i) {
         if (*qList[i] != '?' && strcmp(tList[i], qList[i]) != 0) {
-            freeList(tList,nAtrr);
-            freeList(qList,nAtrr);
             return FALSE;
         }
     }
-    freeList(tList,nAtrr);
-    freeList(qList,nAtrr);
     return TRUE;
 }
 
@@ -118,12 +114,16 @@ char **splitStr(Tuple t, Count nAtrr) {
     char **strList = malloc(sizeof(char *) * nAtrr);
     char *token = strtok(t, ",");
     int count = 0;
+    Tuple tmp = malloc(strlen(t));
+    strcpy(tmp, t);
     while (count < nAtrr) {
         strList[count] = malloc(sizeof(char) * strlen(token));
         strcpy(strList[count], token);
         token = strtok(NULL, ",");
         count++;
     }
+    strcpy(t, tmp);
+    free(tmp);
     return strList;
 }
 

@@ -58,7 +58,8 @@ Bool isSubset(Bits b1, Bits b2) {
     Bits tmp = copyBits(b1);
     andBits(b1, b2);
     Bool equal = equalBits(b1, b2);
-    b1 = tmp;
+    memcpy(b1, tmp, b1->nbytes);
+    free(tmp);
     return equal; // remove this
 }
 
