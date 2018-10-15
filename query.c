@@ -72,6 +72,8 @@ void scanAndDisplayMatchingTuples(Query q) {
             for (int j = 0; j < pageNitems(p); j++) {
                 q->ntuples++;
                 t = getTupleFromPage(q->rel, p, j);
+                showTuple(q->rel, t);
+                showTuple(q->rel, q->qstring);
                 if (tupleEqualsToQuery(t, q)) {
                     showTuple(q->rel, t);
                     match = TRUE;
@@ -89,8 +91,12 @@ void scanAndDisplayMatchingTuples(Query q) {
 
 Bool tupleEqualsToQuery(Tuple t, Query q) {
     Count nAtrr = nAttrs(q->rel);
-    char **tList = splitStr(t, nAtrr);
-    char **qList = splitStr(q->qstring, nAtrr);
+    Tuple tmpT = malloc(sizeof(char) * strlen(t));
+    Tuple tmpQ = malloc(sizeof(char) * strlen(q->qstring));
+    strcpy(tmpT, t);
+    strcpy(tmpQ, q->qstring);
+    char **tList = splitStr(tmpT, nAtrr);
+    char **qList = splitStr(tmpQ, nAtrr);
     for (int i = 0; i < nAtrr; ++i) {
         if (*qList[i] != '?' && strcmp(tList[i], qList[i]) != 0) {
             freeList(tList,nAtrr);
@@ -111,8 +117,6 @@ void freeList(char **list, Count nAttrs) {
 }
 
 char **splitStr(Tuple t, Count nAtrr) {
-    Tuple tmp = malloc(strlen(t));
-    strcpy(tmp, t);
     char **strList = malloc(sizeof(char *) * nAtrr);
     char *token = strtok(t, ",");
     int count = 0;
@@ -122,8 +126,6 @@ char **splitStr(Tuple t, Count nAtrr) {
         token = strtok(NULL, ",");
         count++;
     }
-    strcpy(t, tmp);
-    free(tmp);
     return strList;
 }
 
