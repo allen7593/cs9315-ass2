@@ -62,7 +62,10 @@ Status newRelation(char *name, Count nattrs, float pF,
     r->dataf = openFile(name, "data");
     r->tsigf = openFile(name, "tsig");
     r->psigf = openFile(name, "psig");
+    // printf("r->psigf: %d\n", r->psigf);
     r->bsigf = openFile(name, "bsig");
+    // printf("r->bsigf: %d\n", r->bsigf);
+
     addPage(r->dataf);
     p->npages = 1;
     p->ntups = 0;
@@ -72,14 +75,24 @@ Status newRelation(char *name, Count nattrs, float pF,
     addPage(r->psigf);
     p->psigNpages = 1;
     p->npsigs = 0;
-    addPage(r->bsigf);
-    p->bsigNpages = 1;
-    p->nbsigs = 0; // replace this
+
+    // by Lily
     // Create a file containing "pm" all-zeroes bit-strings,
     // each of which has length "bm" bits
-    //TODO
+    addBsigPage(r);
     closeRelation(r);
     return 0;
+}
+
+void addBsigPage(Reln r) {
+    Count bsigPageNume = r->params.pm / maxBsigsPP(r);
+    if ((r->params.pm % maxBsigsPP(r)) > 0) bsigPageNume++;
+
+    for (int i = 0; i < bsigPageNume; ++i) {
+        addPage(bsigFile(r));
+    }
+    r->params.bsigNpages += bsigPageNume;
+    r->params.nbsigs = r->params.bsigNpages / bsigPageNume * psigBits(r);
 }
 
 // check whether a relation already exists
@@ -166,7 +179,35 @@ PageID addToRelation(Reln r, Tuple t) {
 //    showBits(psig);printf("\n");
     // use page signature to update bit-slices
 
-    //TODO
+    //by Lily
+    Page psigPage = getPage(psigFile(r), nPsigPages(r) - 1);
+    Bits psig = newBits(psigBits(r));
+    Count pageBase = r->params.pm / maxBsigsPP(r);
+    if ((r->params.pm % maxBsigsPP(r)) > 0) pageBase++;
+    if ((nPsigPages(r) - 1) * pageBase >= nBsigPages(r)) {
+        addBsigPage(r);
+    }
+    Bits slice = newBits(bsigBits(r));
+    Count nBsigPage = (nPsigPages(r) - 1) * pageBase;
+    Page bsigPage;
+    Count pageOffset = 0;
+    Count itemOffset = 0;
+    Count nPage = 0;
+    for (Offset i = 0; i < pageNitems(psigPage); ++i) {
+        getBits(psigPage, i, psig);
+        for (int j = 0; j < psigBits(r); ++j) {
+            itemOffset = j % maxBsigsPP(r);
+            pageOffset = j / maxBsigsPP(r);
+            nPage = i + (nPsigPages(r) - 1) * maxPsigsPP(r);
+            if (bitIsSet(psig, j)) {
+                bsigPage = getPage(bsigFile(r), nBsigPage + pageOffset);
+                getBits(bsigPage, itemOffset, slice);
+                setBit(slice, nPage);
+                putBits(bsigPage, itemOffset, slice);
+                putPage(bsigFile(r), nBsigPage + pageOffset, bsigPage);
+            }
+        }
+    }
 
     return nPages(r) - 1;
 }

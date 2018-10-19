@@ -63,6 +63,7 @@ PageID addToRelation(Reln r, Tuple t);
 void relationStats(Reln r);
 PageID addToTSig(Reln r, Bits sig);
 Status addSigToPage(Reln r, Page p, Bits sig);
+void addBsigPage(Reln r);
 
 // Convenience marcos
 

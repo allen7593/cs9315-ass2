@@ -18,7 +18,7 @@ add_executable(cs9315
 #        gendata.c
         hash.c
         hash.h
-#        insert.c
+        insert.c
         page.c
         page.h
 #        pages.c
@@ -28,7 +28,7 @@ add_executable(cs9315
         query.h
         reln.c
         reln.h
-        select.c
+#        select.c
 #        stats.c
         tsig.c
         tsig.h

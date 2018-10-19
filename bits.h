@@ -28,5 +28,6 @@ Bits copyBits(Bits);
 Bool equalBits(Bits, Bits);
 Count tsigBytes(Bits);
 Byte* getSigString(Bits bits);
+Count bitBits(Bits bits);
 
 #endif

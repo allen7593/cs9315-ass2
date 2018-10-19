@@ -177,4 +177,6 @@ void showBits(Bits b) {
 
 Count tsigBytes(Bits bits) { return bits->nbytes; }
 
+Count bitBits(Bits bits) { return bits->nbits; }
+
 Byte *getSigString(Bits bits) { return bits->bitstring; }
