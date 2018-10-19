@@ -16,9 +16,9 @@ void findPagesUsingBitSlices(Query q) {
     Bits slice = newBits(bitBits(q->pages));
     Count itemOffset = 0;
     Count pageBase = psigBits(q->rel) / maxBsigsPP(q->rel);
+    if ((psigBits(q->rel) % maxBsigsPP(q->rel)) > 0) pageBase++;
     Count nBasePage = (nBsigPages(q->rel) / pageBase) - 1;
     Page bsigPage;
-    if ((psigBits(q->rel) % maxBsigsPP(q->rel)) > 0) pageBase++;
     for (int i = 0; i < psigBits(q->rel); ++i) {
         if (bitIsSet(qsig, i)) {
             for (int j = 0; j < nBasePage; ++j) {
@@ -31,8 +31,9 @@ void findPagesUsingBitSlices(Query q) {
 //                            unsetBit(q->pages, k);
 //                        }
 //                    }
-                    orBits(q->pages, slice);
-                    showBits(q->pages);printf("\n");
+                    andBits(q->pages, slice);
+                    showBits(q->pages);
+                    printf("\n");
                     free(bsigPage);
                 }
             }
