@@ -12,32 +12,26 @@
 void findPagesUsingBitSlices(Query q) {
     assert(q != NULL);;
     setAllBits(q->pages);
-    Bits qsig = makePageSig(q->rel, q->qstring);
+    Bits qsig= newBits(psigBits(q->rel));
+    makePageSignature(q->rel, q->qstring, qsig);
     Bits slice = newBits(bitBits(q->pages));
-    Count itemOffset = 0;
-    Count pageBase = psigBits(q->rel) / maxBsigsPP(q->rel);
-    if ((psigBits(q->rel) % maxBsigsPP(q->rel)) > 0) pageBase++;
-    Count nBasePage = (nBsigPages(q->rel) / pageBase) - 1;
+    Count bsigPageOffset = 0;
+    Count bsigItemOffset = 0;
     Page bsigPage;
+    Count page = 0;
     for (int i = 0; i < psigBits(q->rel); ++i) {
-        if (bitIsSet(qsig, i)) {
-            for (int j = 0; j < nBasePage; ++j) {
-                itemOffset = i % maxBsigsPP(q->rel);
-                for (Count l = 0; l < pageBase; ++l) {
-                    bsigPage = getPage(bsigFile(q->rel), j * pageBase + l);
-                    getBits(bsigPage, itemOffset, slice);
-//                    for (int k = 0; k < bitBits(q->pages); ++k) {
-//                        if (!bitIsSet(slice, k)) {
-//                            unsetBit(q->pages, k);
-//                        }
-//                    }
-                    andBits(q->pages, slice);
-                    showBits(q->pages);
-                    printf("\n");
-                    free(bsigPage);
-                }
-            }
+        bsigPageOffset = i / maxBsigsPP(q->rel);
+        bsigItemOffset = i % maxBsigsPP(q->rel);
+        if(bitIsSet(qsig, i)) {
+            page++;
+            q->nsigpages++;
+            q->nsigs++;
+            bsigPage = getPage(bsigFile(q->rel), bsigPageOffset);
+            getBits(bsigPage, bsigItemOffset, slice);
+            andBits(q->pages, slice);
         }
     }
+    printf("Page: %d\n", page);
+
 }
 

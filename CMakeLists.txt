@@ -18,7 +18,7 @@ add_executable(cs9315
 #        gendata.c
         hash.c
         hash.h
-        insert.c
+#        insert.c
         page.c
         page.h
 #        pages.c
@@ -38,5 +38,5 @@ add_executable(cs9315
         util.h
 #        x1.c
 #        x2.c
-#        x3.c
+        x3.c
         )

@@ -151,6 +151,7 @@ PageID addToRelation(Reln r, Tuple t) {
     PageID pid;
     RelnParams *rp = &(r->params);
     Bits tsig = NULL;
+    Bits psig;
 
     // add tuple to last page
     pid = rp->npages - 1;
@@ -175,37 +176,25 @@ PageID addToRelation(Reln r, Tuple t) {
 
     // compute page signature and add to psigf
 
-    makePageSig(r,t);
+    psig = makePageSig(r, t);
 //    showBits(psig);printf("\n");
     // use page signature to update bit-slices
 
     //by Lily
-    Page psigPage = getPage(psigFile(r), nPsigPages(r) - 1);
-    Bits psig = newBits(psigBits(r));
-    Count pageBase = r->params.pm / maxBsigsPP(r);
-    if ((r->params.pm % maxBsigsPP(r)) > 0) pageBase++;
-    if ((nPsigPages(r) - 1) * pageBase >= nBsigPages(r)) {
-        addBsigPage(r);
-    }
     Bits slice = newBits(bsigBits(r));
-    Count nBsigPage = (nPsigPages(r) - 1) * pageBase;
-    Page bsigPage;
-    Count pageOffset = 0;
-    Count itemOffset = 0;
-    Count nPage = 0;
-    for (Offset i = 0; i < pageNitems(psigPage); ++i) {
-        getBits(psigPage, i, psig);
-        for (int j = 0; j < psigBits(r); ++j) {
-            itemOffset = j % maxBsigsPP(r);
-            pageOffset = j / maxBsigsPP(r);
-            nPage = i + (nPsigPages(r) - 1) * maxPsigsPP(r);
-            if (bitIsSet(psig, j)) {
-                bsigPage = getPage(bsigFile(r), nBsigPage + pageOffset);
-                getBits(bsigPage, itemOffset, slice);
-                setBit(slice, nPage);
-                putBits(bsigPage, itemOffset, slice);
-                putPage(bsigFile(r), nBsigPage + pageOffset, bsigPage);
-            }
+    Count nPage = nPsigs(r) - 1;
+    Count bsigPageOffset = 0;
+    Count bsigItemOffset = 0;
+    Page currentBsig;
+    for (int i = 0; i < psigBits(r); ++i) {
+        bsigPageOffset = i / maxBsigsPP(r);
+        bsigItemOffset = i % maxBsigsPP(r);
+        if (bitIsSet(psig, i)) {
+            currentBsig = getPage(bsigFile(r), bsigPageOffset);
+            getBits(currentBsig, bsigItemOffset, slice);
+            setBit(slice, nPage);
+            putBits(currentBsig, bsigItemOffset, slice);
+            putPage(bsigFile(r), bsigPageOffset, currentBsig);
         }
     }
 
@@ -228,6 +217,7 @@ PageID addToTSig(Reln r, Bits sig) {
     addSigToPage(r, p, sig);
     nTsigs(r)++;
     putPage(tsigFile(r), pid, p);
+    freeBits(sig);
     return nTsigPages(r) - 1;
 }
 

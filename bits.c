@@ -25,9 +25,7 @@ Bits newBits(int nbits) {
     Bits new = malloc(2 * sizeof(Count) + nbytes);
     new->nbits = nbits;
     new->nbytes = nbytes;
-    for (int i = 0; i < new->nbytes; i++) {
-        memset(&(new->bitstring[i]), 0, 1);
-    }
+    memset(&(new->bitstring[0]), 0, nbytes);
     return new;
 }
 

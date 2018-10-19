@@ -32,7 +32,6 @@ Bits makePageSig(Reln r, Tuple t) {
         addOneItem(psigPage);
     putBits(psigPage, pSigPageOffSet, psig);
     putPage(psigFile(r), nPsigPages(r) - 1, psigPage);
-
     return psig;
 }
 
