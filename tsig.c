@@ -48,21 +48,20 @@ void findPagesUsingTupSigs(Query q) {
     Count maxSigPP = maxTsigsPP(q->rel);
     Page page;
     PageID pid = 0;
-    Bits tsig;
+    Bits tsig = newBits(tsigBits(q->rel));;
     for (int i = 0; i < nTsigPages(q->rel); ++i) {
         q->nsigpages++;
         page = getPage(q->rel->tsigf, i);
         for (int j = 0; j < pageNitems(page); ++j) {
             q->nsigs++;
-            tsig = newBits(tsigBits(q->rel));
             getBits(page, j, tsig);
             if (isSubset(tsig, qsig)) {
                 pid = (j + i * maxSigPP) / maxTuplePP;
                 setBit(q->pages, pid);
             }
-            freeBits(tsig);
         }
         free(page);
     }
+    freeBits(tsig);
     free(qsig);
 }
