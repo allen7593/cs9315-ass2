@@ -82,6 +82,7 @@ void scanAndDisplayMatchingTuples(Query q) {
                 q->nfalse++;
             }
             match = FALSE;
+            free(p);
         }
     }
 }
