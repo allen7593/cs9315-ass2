@@ -88,17 +88,25 @@ void scanAndDisplayMatchingTuples(Query q) {
 
 Bool tupleEqualsToQuery(Tuple t, Query q) {
     Count nAtrr = nAttrs(q->rel);
-    Tuple tmpT = malloc(sizeof(char) * strlen(t));
-    Tuple tmpQ = malloc(sizeof(char) * strlen(q->qstring));
+    Tuple tmpT = malloc(sizeof(char) * strlen(t) + 1);
+    Tuple tmpQ = malloc(sizeof(char) * strlen(q->qstring) + 1);
     strcpy(tmpT, t);
     strcpy(tmpQ, q->qstring);
     char **tList = splitStr(tmpT, nAtrr);
     char **qList = splitStr(tmpQ, nAtrr);
     for (int i = 0; i < nAtrr; ++i) {
         if (*qList[i] != '?' && strcmp(tList[i], qList[i]) != 0) {
+            free(tmpT);
+            free(tmpQ);
+            freeList(tList, nAtrr);
+            freeList(qList, nAtrr);
             return FALSE;
         }
     }
+    free(tmpT);
+    free(tmpQ);
+    freeList(tList, nAtrr);
+    freeList(qList, nAtrr);
     return TRUE;
 }
 
