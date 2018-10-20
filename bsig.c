@@ -31,7 +31,6 @@ void findPagesUsingBitSlices(Query q) {
             andBits(q->pages, slice);
         }
     }
-    printf("Page: %d\n", page);
 
 }
 
